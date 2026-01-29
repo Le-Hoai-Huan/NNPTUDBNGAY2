@@ -3,203 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sản phẩm</title>
+    <title>Quản lý sản phẩm</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px 0;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .loading {
-            text-align: center;
-            color: white;
-            font-size: 1.2em;
-        }
-
-        .error {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .product-card {
+        
+        .main-container {
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        
+        .header-section {
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-
-        .product-body {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .product-category {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin-bottom: 10px;
-            width: fit-content;
-        }
-
-        .product-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        .product-description {
-            font-size: 0.95em;
-            color: #666;
-            margin-bottom: 15px;
-            flex: 1;
-            line-height: 1.5;
-        }
-
-        .product-price {
-            font-size: 1.5em;
-            font-weight: bold;
+        
+        .header-section h1 {
             color: #667eea;
-            margin-bottom: 15px;
+            font-weight: 700;
         }
-
-        .product-footer {
-            display: flex;
-            gap: 10px;
-            font-size: 0.85em;
+        
+        .control-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             color: #999;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
         }
-
-        .btn-group {
-            text-align: center;
+        
+        .search-box input {
+            padding-left: 45px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .product-image-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .badge-category {
+            font-size: 0.85em;
+            padding: 6px 12px;
+        }
+        
+        .price-cell {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .pagination-controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 20px;
         }
-
-        .btn {
-            background: white;
-            color: #667eea;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-            font-weight: 600;
-            margin: 0 10px;
+        
+        .sort-btn {
             transition: all 0.3s ease;
         }
-
-        .btn:hover {
-            background: #667eea;
-            color: white;
+        
+        .sort-btn:hover {
+            transform: translateY(-2px);
         }
-
-        .stats {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .stats p {
-            color: #667eea;
-            font-size: 1.8em;
-            font-weight: bold;
+        
+        .sort-btn.active {
+            background: #667eea !important;
+            color: white !important;
+            border-color: #667eea !important;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📦 Danh sách sản phẩm</h1>
-            <p>Khám phá bộ sưu tập sản phẩm chất lượng cao</p>
-        </div>
-
-        <div class="stats">
-            <h3>Tổng số sản phẩm</h3>
-            <p id="product-count">Đang tải...</p>
-        </div>
-
-        <div id="error-message"></div>
-        <div id="loading" class="loading">Đang tải dữ liệu...</div>
-        <div id="products-container" class="products-grid"></div>
-
-        <div class="btn-group">
-            <button class="btn" onclick="loadData()">🔄 Làm mới</button>
-            <button class="btn" onclick="sortByPrice()">💰 Sắp xếp giá</button>
-            <button class="btn" onclick="sortByTitle()">🔤 Sắp xếp tên</button>
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header-section">
+                <h1><i class="bi bi-box-seam"></i> Quản lý sản phẩm</h1>
+                <p class="text-muted mb-0">Hệ thống quản lý danh sách sản phẩm</p>
+            </div>
+            
+            <!-- Controls -->
+            <div class="control-section">
+                <div class="row g-3">
+                    <!-- Search -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold"><i class="bi bi-search"></i> Tìm kiếm theo tên</label>
+                        <div class="search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="form-control" 
+                                   placeholder="Nhập tên sản phẩm..."
+                                   onchange="handleSearch()">
+                        </div>
+                    </div>
+                    
+                    <!-- Items per page -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-list-ol"></i> Số dòng/trang</label>
+                        <select id="itemsPerPage" class="form-select" onchange="handleItemsPerPageChange()">
+                            <option value="5">5 sản phẩm</option>
+                            <option value="10" selected>10 sản phẩm</option>
+                            <option value="20">20 sản phẩm</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Total count -->
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"><i class="bi bi-info-circle"></i> Tổng số</label>
+                        <div class="alert alert-info mb-0 py-2 text-center">
+                            <strong id="productCount">0</strong> sản phẩm
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sort buttons -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <label class="form-label fw-bold"><i class="bi bi-sort-down"></i> Sắp xếp</label>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary sort-btn" onclick="sortByName('asc')">
+                                <i class="bi bi-sort-alpha-down"></i> Tên A-Z
+                            </button>
+                            <button type="button" class="btn btn-outline-primary sort-btn" onclick="sortByName('desc')">
+                                <i class="bi bi-sort-alpha-up"></i> Tên Z-A
+                            </button>
+                            <button type="button" class="btn btn-outline-success sort-btn" onclick="sortByPrice('asc')">
+                                <i class="bi bi-sort-numeric-down"></i> Giá tăng dần
+                            </button>
+                            <button type="button" class="btn btn-outline-success sort-btn" onclick="sortByPrice('desc')">
+                                <i class="bi bi-sort-numeric-up"></i> Giá giảm dần
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading & Error -->
+            <div id="loading" class="text-center py-5 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+                <p class="mt-3 text-muted">Đang tải dữ liệu...</p>
+            </div>
+            
+            <div id="errorMessage"></div>
+            
+            <!-- Table -->
+            <div class="table-container">
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 10%;">Hình ảnh</th>
+                            <th style="width: 25%;">Tên sản phẩm</th>
+                            <th style="width: 15%;">Danh mục</th>
+                            <th style="width: 30%;">Mô tả</th>
+                            <th style="width: 10%;">Giá</th>
+                            <th style="width: 5%;">ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTable">
+                        <!-- Products will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-controls">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-0 text-muted">
+                            Hiển thị <strong id="showingFrom">0</strong> - <strong id="showingTo">0</strong> 
+                            trong tổng số <strong id="totalItems">0</strong> sản phẩm
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <nav>
+                            <ul class="pagination justify-content-end mb-0" id="pagination">
+                                <!-- Pagination will be inserted here -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
