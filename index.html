@@ -1,227 +1,114 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý sản phẩm</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>Quản lý Posts & Comments</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px 0;
+        .deleted-item {
+            background-color: #ffe6e6;
         }
-        
-        .main-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .header-section {
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .header-section h1 {
-            color: #667eea;
-            font-weight: 700;
-        }
-        
-        .control-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
-        
-        .search-box {
-            position: relative;
-        }
-        
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .deleted-item td {
+            text-decoration: line-through;
             color: #999;
-        }
-        
-        .search-box input {
-            padding-left: 45px;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        .product-image-thumb {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
-        }
-        
-        .badge-category {
-            font-size: 0.85em;
-            padding: 6px 12px;
-        }
-        
-        .price-cell {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-        
-        .pagination-controls {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
-        .sort-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .sort-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .sort-btn.active {
-            background: #667eea !important;
-            color: white !important;
-            border-color: #667eea !important;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="main-container">
-            <!-- Header -->
-            <div class="header-section">
-                <h1><i class="bi bi-box-seam"></i> Quản lý sản phẩm</h1>
-                <p class="text-muted mb-0">Hệ thống quản lý danh sách sản phẩm</p>
-            </div>
+    <div class="container mt-4">
+        <h1>Quản lý Posts</h1>
+        
+        <!-- Posts Table -->
+        <div id="posts-section">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Comments</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+
+                </tbody>
+            </table>
             
-            <!-- Controls -->
-            <div class="control-section">
-                <div class="row g-3">
-                    <!-- Search -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold"><i class="bi bi-search"></i> Tìm kiếm theo tên</label>
-                        <div class="search-box">
-                            <i class="bi bi-search"></i>
-                            <input type="text" 
-                                   id="searchInput" 
-                                   class="form-control" 
-                                   placeholder="Nhập tên sản phẩm..."
-                                   onchange="handleSearch()">
+            <!-- Form thêm/sửa post -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 id="form-title">Thêm/Sửa Post</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <input type="text" placeholder="ID (tự động)" id="id_txt" class="form-control" readonly />
                         </div>
-                    </div>
-                    
-                    <!-- Items per page -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="bi bi-list-ol"></i> Số dòng/trang</label>
-                        <select id="itemsPerPage" class="form-select" onchange="handleItemsPerPageChange()">
-                            <option value="5">5 sản phẩm</option>
-                            <option value="10" selected>10 sản phẩm</option>
-                            <option value="20">20 sản phẩm</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Total count -->
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold"><i class="bi bi-info-circle"></i> Tổng số</label>
-                        <div class="alert alert-info mb-0 py-2 text-center">
-                            <strong id="productCount">0</strong> sản phẩm
+                        <div class="col-md-5">
+                            <input type="text" placeholder="Title" id="title_txt" class="form-control" required />
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Sort buttons -->
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <label class="form-label fw-bold"><i class="bi bi-sort-down"></i> Sắp xếp</label>
-                        <div class="btn-group w-100" role="group">
-                            <button type="button" class="btn btn-outline-primary sort-btn" onclick="sortByName('asc')">
-                                <i class="bi bi-sort-alpha-down"></i> Tên A-Z
-                            </button>
-                            <button type="button" class="btn btn-outline-primary sort-btn" onclick="sortByName('desc')">
-                                <i class="bi bi-sort-alpha-up"></i> Tên Z-A
-                            </button>
-                            <button type="button" class="btn btn-outline-success sort-btn" onclick="sortByPrice('asc')">
-                                <i class="bi bi-sort-numeric-down"></i> Giá tăng dần
-                            </button>
-                            <button type="button" class="btn btn-outline-success sort-btn" onclick="sortByPrice('desc')">
-                                <i class="bi bi-sort-numeric-up"></i> Giá giảm dần
+                        <div class="col-md-2">
+                            <input type="number" placeholder="Views" id="views_txt" class="form-control" value="0" />
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" onclick="Save()">
+                                <i class="bi bi-save"></i> Lưu
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div id="comments-section" class="d-none">
+            <button class="btn btn-secondary mb-3" onclick="backToPosts()">
+                <i class="bi bi-arrow-left"></i> Quay lại Posts
+            </button>
+            <h3>Comments cho: <span id="current-post-title"></span></h3>
             
-            <!-- Loading & Error -->
-            <div id="loading" class="text-center py-5 d-none">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Đang tải...</span>
-                </div>
-                <p class="mt-3 text-muted">Đang tải dữ liệu...</p>
-            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nội dung</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="comments-table-body">
+
+                </tbody>
+            </table>
             
-            <div id="errorMessage"></div>
-            
-            <!-- Table -->
-            <div class="table-container">
-                <table class="table table-hover table-striped align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th style="width: 5%;">#</th>
-                            <th style="width: 10%;">Hình ảnh</th>
-                            <th style="width: 25%;">Tên sản phẩm</th>
-                            <th style="width: 15%;">Danh mục</th>
-                            <th style="width: 30%;">Mô tả</th>
-                            <th style="width: 10%;">Giá</th>
-                            <th style="width: 5%;">ID</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTable">
-                        <!-- Products will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            <div class="pagination-controls">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <p class="mb-0 text-muted">
-                            Hiển thị <strong id="showingFrom">0</strong> - <strong id="showingTo">0</strong> 
-                            trong tổng số <strong id="totalItems">0</strong> sản phẩm
-                        </p>
-                    </div>
-                    <div class="col-md-6">
-                        <nav>
-                            <ul class="pagination justify-content-end mb-0" id="pagination">
-                                <!-- Pagination will be inserted here -->
-                            </ul>
-                        </nav>
+            <!-- Form thêm/sửa comment -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 id="comment-form-title">Thêm/Sửa Comment</h5>
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <input type="text" placeholder="ID (tự động)" id="comment_id_txt" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" placeholder="Nội dung comment" id="comment_text_txt" class="form-control" required />
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success w-100" onclick="SaveComment()">
+                                <i class="bi bi-save"></i> Lưu Comment
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>
